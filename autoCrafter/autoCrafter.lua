@@ -2,7 +2,7 @@ local DEBUG = false
 local fakePeripheralPath = ""
 
 ---@alias ItemJson {config: {logging: {enabled: boolean, logLevel: integer, path: string, outputToTerminal: boolean}}, items: {item: string, count: integer}[]}
----@alias MEBridge {isItemCraftable: fun(table):(boolean), isItemCrafting: fun(table):(boolean), getItem: fun(table):({name: string, amount: integer}), craftItem: fun(table):(boolean), getCraftingCPUs: fun():({name: string, storage: integer, coProcessors: integer, isBusy: boolean}[])}
+---@alias MEBridge {isItemCraftable: fun(table):(boolean), isItemCrafting: fun(table):(boolean), getItem: fun(table):({name: string, amount: integer}), craftItem: fun(table):(boolean), getCraftingCPUs: fun():({name: string, storage: integer, coProcessors: integer, isBusy: boolean}[], listItems: fun():(table[]))}
 
 
 
@@ -140,15 +140,27 @@ function AutoCrafter:tryToCraft(itemName)
 end
 
 function AutoCrafter:getCurrentAmount(itemName)
-    local result = self.MEBridge.getItem(
-        { name = itemName }
-    )
-    local amount = result.amount
-    if amount == nil then
-        amount = 0
-    end
+    local result = self.MEBridge.listItems()
 
-    return amount
+    for itemNumber in pairs(result) do
+        local currItem = result[itemNumber]
+        if currItem.name == itemName then
+            local amount = currItem.amount
+            if amount == nil then
+                amount = 0
+            end
+            if currItem.nbt ~= nil
+                and currItem.nbt.tag ~= nil
+                and currItem.nbt.tag.Damage ~= nil then
+                if currItem.nbt.tag.Damage == 0 then
+                    return amount
+                end
+            else
+                return amount
+            end
+        end
+    end
+    return 0
 end
 
 function AutoCrafter:itemNeedToCraft(itemName, itemTargetAmount)
@@ -157,7 +169,6 @@ function AutoCrafter:itemNeedToCraft(itemName, itemTargetAmount)
     end
 
     local currentAmount = self:getCurrentAmount(itemName)
-
     if currentAmount < itemTargetAmount then
         return true
     end
@@ -190,7 +201,6 @@ function AutoCrafter:init()
         end
     end
 end
-
 
 if DEBUG then
     debugCreatePeripheral()
