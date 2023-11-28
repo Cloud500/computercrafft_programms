@@ -1,0 +1,24 @@
+{
+    "name": "ME Autocrafter",
+    "version": "0.1.0",
+    "command": "autoCrafter",
+    "files": [
+        {
+            "type": "git",
+            "localPath": "/autoCrafter.lua",
+            "gitPath": "https://raw.githubusercontent.com/Cloud500/computercrafft_programms/main/autoCrafter/autoCrafter.lua"
+        }
+    ],
+    "dependencies": [
+        {
+            "type": "git",
+            "localPath": "lib/logger.lua",
+            "gitPath": "https://raw.githubusercontent.com/Cloud500/computercrafft_programms/main/lib/logger.lua"
+        },
+        {
+            "type": "git",
+            "localPath": "items.json",
+            "gitPath": "https://raw.githubusercontent.com/Cloud500/computercrafft_programms/main/autoCrafter/items.json"
+        }
+    ]
+}
