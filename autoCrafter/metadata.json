@@ -17,6 +17,7 @@
         },
         {
             "type": "git",
+            "override": false,
             "localPath": "items.json",
             "gitPath": "https://raw.githubusercontent.com/Cloud500/computercrafft_programms/main/autoCrafter/items.json"
         }

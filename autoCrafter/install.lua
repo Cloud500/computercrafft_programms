@@ -1,7 +1,12 @@
 local metadataFile = "https://raw.githubusercontent.com/Cloud500/computercrafft_programms/main/autoCrafter/metadata.json"
 
-local function downloadGit(path, file)
-    print("Download " .. file .. "from Git")
+local function downloadGit(path, file, override)
+    if override and fs.exists(file) then
+        print(file .. " exist, don't override")
+        return
+    end
+
+    print("Download " .. file .. " from Git")
     local repo = http.get(path)
     local data = repo.readAll()
     repo.close()
@@ -35,8 +40,12 @@ end
 local function downloadFiles(fileList)
     for fileNumber in pairs(fileList) do
         local fileData = fileList[fileNumber]
+        local override = true
+        if fileData.override ~= nil then
+            override = fileData.override
+        end
         if fileData.type == "git"then
-            downloadGit(fileData.gitPath, fileData.localPath)
+            downloadGit(fileData.gitPath, fileData.localPath, override)
         elseif fileData.type == "pastebin" then
             downloadPastebin(fileData.id, fileData.localPath)
         end
